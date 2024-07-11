@@ -1,0 +1,1 @@
+web: streamlit run ai_framework.py --server.port=$PORT
