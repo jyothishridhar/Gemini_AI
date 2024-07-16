@@ -1,11 +1,5 @@
 import streamlit as st
 import google.generativeai as genai
-import pandas as pd
-import base64
-import os
-from io import BytesIO
-from openpyxl import Workbook
-from openpyxl.utils.dataframe import dataframe_to_rows
 
 # Configure API key
 api_key = "AIzaSyAxz3eWwhOlP-g3Cws-O153RGnxoidGv_0"
@@ -71,7 +65,11 @@ if st.button("Generate Test Cases"):
     st.code(python_code, language='python')
 
     # Download button for Python script
-    download_filename = "generated_test_script.py"
-    b64 = base64.b64encode(python_code.encode()).decode()
-    href = f'<a href="data:file/txt;base64,{b64}" download="{download_filename}">Download Python Script</a>'
-    st.markdown(href, unsafe_allow_html=True)
+    file_name = "generated_test_script.py"
+    file_bytes = python_code.encode()
+    st.download_button(
+        label="Download Python Script",
+        data=file_bytes,
+        file_name=file_name,
+        mime="text/python"
+    )
