@@ -5,6 +5,8 @@ import base64
 import os
 from openpyxl import Workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
+import unittest
+import tempfile
 
 # Configure API key
 api_key = "AIzaSyAxz3eWwhOlP-g3Cws-O153RGnxoidGv_0"
@@ -56,3 +58,14 @@ if st.button("Generate Test Cases"):
         file_name="test_cases_and_step_definitions.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
+
+    # Validation step (simple example)
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".py") as temp_script:
+        temp_script.write(response.encode())
+        temp_script_path = temp_script.name
+
+    validation_result = os.system(f"python -m py_compile {temp_script_path}")
+    if validation_result == 0:
+        st.success("Generated script is syntactically correct.")
+    else:
+        st.error("Generated script has syntax errors.")
