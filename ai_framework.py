@@ -21,13 +21,13 @@ def get_gemini_response(prompt):
         return "No valid response returned. Please check the input requirements."
     return response.parts[0].text
 
-# Function to check syntax validity
-def is_valid_python_code(code):
+# Function to check syntax validity and return errors
+def check_syntax(code):
     try:
         ast.parse(code)
-        return True
-    except SyntaxError:
-        return False
+        return True, None
+    except SyntaxError as e:
+        return False, e
 
 st.title("Generate Test Cases and Step Definitions")
 
@@ -68,7 +68,11 @@ if st.button("Generate Test Cases"):
     )
 
     # Validation step
-    if is_valid_python_code(response):
+    is_valid, error = check_syntax(response)
+    if is_valid:
         st.success("Generated script is syntactically correct.")
     else:
-        st.error("Generated script has syntax errors.")
+        st.error(f"Generated script has syntax errors: {error}")
+
+        # Display error details
+        st.text_area("Error Details", str(error), height=200)
