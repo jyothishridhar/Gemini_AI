@@ -19,28 +19,38 @@ def get_gemini_response(prompt):
         return "No valid response returned. Please check the input requirements."
     return response.parts[0].text
 
-# Function to generate Python code from BDD test cases
-def generate_python_code(requirement):
+# Function to generate BDD test cases and step definitions
+def generate_bdd_test_cases(requirement):
     prompt = f"Generate BDD test cases and their respective step definitions for Selenium and Python based on the following requirements:\n\n{requirement}"
     response = get_gemini_response(prompt)
-    
-    test_cases_list = [case.strip() for case in response.split('\n') if case.strip()]
+    return response
+
+# Function to generate Python code from BDD test cases
+def generate_python_code(test_cases):
+    test_cases_list = [case.strip() for case in test_cases.split('\n') if case.strip()]
     python_code = ""
-    
-    for index, case in enumerate(test_cases_list):
+
+    scenario_count = 0
+    scenario_code = ""
+
+    for case in test_cases_list:
         if case.startswith("Scenario"):
-            python_code += f"\n# {case}\n"
-            python_code += f"def test_scenario_{index + 1}():\n"
+            if scenario_code:
+                python_code += scenario_code + "\n\n"
+            scenario_count += 1
+            scenario_code = f"# {case}\ndef test_scenario_{scenario_count}():\n"
         elif case.startswith("* Given"):
-            python_code += f"    # {case}\n"
-            python_code += f"    # Implement your code here\n"
+            scenario_code += f"    # {case}\n"
+            scenario_code += f"    # Implement your code here\n"
         elif case.startswith("* When"):
-            python_code += f"    # {case}\n"
-            python_code += f"    # Implement your code here\n"
+            scenario_code += f"    # {case}\n"
+            scenario_code += f"    # Implement your code here\n"
         elif case.startswith("* Then"):
-            python_code += f"    # {case}\n"
-            python_code += f"    # Implement your code here\n"
-        python_code += "\n"
+            scenario_code += f"    # {case}\n"
+            scenario_code += f"    # Implement your code here\n"
+    
+    if scenario_code:
+        python_code += scenario_code + "\n"
     
     return python_code
 
@@ -49,7 +59,12 @@ st.title("Generate Test Cases and Step Definitions")
 requirement = st.text_area("Enter the requirements for generating test cases:")
 
 if st.button("Generate Test Cases"):
-    python_code = generate_python_code(requirement)
+    test_cases = generate_bdd_test_cases(requirement)
+    
+    st.subheader("Generated Test Cases and Step Definitions:")
+    st.write(test_cases)
+
+    python_code = generate_python_code(test_cases)
     
     st.subheader("Generated Python Test Scripts:")
     st.code(python_code, language='python')
