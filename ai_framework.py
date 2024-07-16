@@ -28,36 +28,9 @@ if st.button("Generate Test Cases"):
     response = get_gemini_response(prompt)
     
     st.subheader("Generated Test Cases and Step Definitions:")
-    st.write(response)
+    st.code(response, language='python')
     
-    test_cases_list = [case.strip() for case in response.split('\n') if case.strip()]
-    df = pd.DataFrame({"Test Cases and Step Definitions": test_cases_list})
-    
-    st.subheader("Generated Test Cases and Step Definitions (Formatted):")
-    st.write(df)
-    
-    local_file_path = "C:\\Testcases\\test_cases_and_step_definitions.xlsx"
-    directory = os.path.dirname(local_file_path)
-
-    if directory and not os.path.exists(directory):
-        os.makedirs(directory)
-        st.write(f"Directory created: {directory}")
-
-    with pd.ExcelWriter(local_file_path, engine='openpyxl') as writer:
-        df.to_excel(writer, index=False, sheet_name='Sheet1')
-        workbook = writer.book
-        worksheet = writer.sheets['Sheet1']
-    
-    st.success(f"File saved successfully at {local_file_path}")
-
-    st.download_button(
-        label="Download data as Excel",
-        data=open(local_file_path, 'rb'),
-        file_name="test_cases_and_step_definitions.xlsx",
-        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    )
-    
-    # Save only the Python code part to a separate Python script file
+    # Extract only the Python code part
     script_lines = response.split("\n```")[1].strip().split("\n")
     script_code = "\n".join(script_lines)
     
