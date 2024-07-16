@@ -57,10 +57,13 @@ if st.button("Generate Test Cases"):
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
     
-    # Save the response to a separate Python script file
+    # Save only the Python code part to a separate Python script file
+    script_lines = response.split("\n```")[1].strip().split("\n")
+    script_code = "\n".join(script_lines)
+    
     script_file_path = "C:\\Testcases\\script.py"
     with open(script_file_path, 'w') as script_file:
-        script_file.write(response)
+        script_file.write(script_code)
     
     st.success(f"Script saved successfully at {script_file_path}")
     
