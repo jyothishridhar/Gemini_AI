@@ -69,6 +69,12 @@ if st.button("Generate Test Cases"):
     st.subheader("Generated Python Test Scripts:")
     st.code(python_code, language='python')
 
-    # Optionally, save to Excel
-    # df = pd.DataFrame({"Test Cases and Step Definitions": test_cases_list})
-    # ...
+    # Download button for Python script
+    file_name = "generated_test_script.py"
+    file_bytes = python_code.encode()
+    st.download_button(
+        label="Download Python Script",
+        data=file_bytes,
+        file_name=file_name,
+        mime="text/python"
+    )
