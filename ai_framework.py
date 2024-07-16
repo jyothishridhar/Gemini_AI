@@ -7,7 +7,7 @@ genai.configure(api_key=api_key)
 
 # Function to load Google Gemini Pro and get response
 def get_gemini_response(prompt):
-    model = genai.GenerativeModel('gemini-pro')
+    model = genai.GenerativeModel('Gemini 1.5 Pro')
     response = model.generate_content([prompt])
     if not response or not response.parts:
         st.error("No valid response returned. The content might have been blocked.")

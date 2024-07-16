@@ -1,58 +1,36 @@
+from allure_commons.types import AttachmentType
 from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-import pandas as pd
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
+import allure
+import os
+import pytest
 
+@pytest.fixture(scope="function")
+def setup(request):
+    context = {}
+    context["browser"] = webdriver.Chrome()
+    request.cls.context = context
 
-options = webdriver.ChromeOptions()
-options.add_argument('--no-sandbox')
-options.add_argument('--window-size=1420,1080')
-options.add_argument('--headless')
-options.add_argument('--disable-gpu')
+    def teardown():
+        context["browser"].quit()
 
-# Load test cases from Excel
-df = pd.read_excel("C:\\Testcases\\data.xlsx", sheet_name="Sheet1")
-test_cases = df['Test Cases'].tolist()
+    request.addfinalizer(teardown)
 
-# Initialize WebDriver (assuming Chrome here, specify path if WebDriver is not in PATH)
-driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+class TestPaycomonline:
 
-# Example URL to navigate (replace with your application URL)
-url = "https://www.paycomonline.net/v4/ats/web.php/jobs?clientkey=FC9962A89833ED19DB7F75E9F964ACB9"
-driver.get(url)
+    @allure.tag("Search Job Postings")
+    def test_search_job_postings(self, context):
+        step_user_is_on_paycomonline_website(context)
+        step_user_enters_search_term(context)
+        step_search_results_are_displayed(context)
 
-try:
-    for case in test_cases:
-        # Example: Perform actions based on test case
-        # Assuming each test case is a sequence of actions
-        actions = case.split(";")
-        
-        for action in actions:
-            # Example: Action to enter text in a field
-            if action.startswith("Enter"):
-                element_id = action.split(":")[1].strip()
-                text_to_enter = action.split(":")[2].strip()
-                element = driver.find_element(By.ID, element_id)
-                element.send_keys(text_to_enter)
-            
-            # Example: Action to click a button
-            elif action.startswith("Click"):
-                element_id = action.split(":")[1].strip()
-                element = driver.find_element(By.ID, element_id)
-                element.click()
-            
-            # Add more actions as per your test case format
+    @allure.tag("Filters")
+    def test_filters(self, context):
+        step_user_is_on_paycomonline_website(context)
+        step_user_clicks_on_filters_button(context)
+        step_user_selects_full_time_in_employment_type_filter(context)
+        step_only_full_time_job_postings_are_displayed(context)
+        step_user_selects_overnight_in_schedule_filter(context)
+        step_only_overnight_job_postings_are_displayed(context)
 
-        # Example: Navigate back to the homepage for the next test case
-        driver.get(url)
-
-finally:
-    # Close the browser window
-    driver.quit()
+if __name__ == "__main__":
+    pytest.main()
