@@ -61,6 +61,9 @@ if st.button("Generate Test Cases"):
     st.subheader("Raw Response")
     st.write(response)
     
+    if response == "No valid response returned. Please check the input requirements.":
+        st.stop()
+
     st.subheader("Generated Test Cases and Step Definitions:")
     st.write(response)
     
@@ -71,6 +74,11 @@ if st.button("Generate Test Cases"):
     st.write(cleaned_response)
     
     test_cases_list = [case.strip() for case in cleaned_response.split('\n') if case.strip()]
+    
+    # Debugging: Print the list of test cases
+    st.subheader("List of Test Cases and Step Definitions")
+    st.write(test_cases_list)
+    
     df = pd.DataFrame({"Test Cases and Step Definitions": test_cases_list})
     
     st.subheader("Generated Test Cases and Step Definitions (Formatted):")
