@@ -1,5 +1,6 @@
 import streamlit as st
 import google.generativeai as genai
+import os
 
 # Configure API key
 api_key = "AIzaSyAxz3eWwhOlP-g3Cws-O153RGnxoidGv_0"
@@ -76,10 +77,17 @@ if st.button("Generate Test Cases"):
     st.text(python_code)
 
     # Save Python script to file
-    file_name = "C:\\Testcases\\test_script.py"
-    file_saved = write_python_script_to_file(file_name, python_code)
+    features_directory = "C:\\AI_framework\\features"
+    automated_py_file = "C:\\AI_framework\\Automated.py"
     
-    if file_saved:
-        st.success(f"Python script saved to: {file_name}")
+    if not os.path.exists(features_directory):
+        os.makedirs(features_directory)
+    
+    file_saved_features = write_python_script_to_file(os.path.join(features_directory, "test_cases.feature"), test_cases)
+    file_saved_automated_py = write_python_script_to_file(automated_py_file, python_code)
+    
+    if file_saved_features and file_saved_automated_py:
+        st.success(f"Test cases saved to: {features_directory}\\test_cases.feature")
+        st.success(f"Python script saved to: {automated_py_file}")
     else:
-        st.error("Failed to save Python script. Please check the logs for details.")
+        st.error("Failed to save test cases or Python script. Please check the logs for details.")
