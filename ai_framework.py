@@ -49,6 +49,12 @@ def generate_complete_python_script(test_cases):
     
     return python_code
 
+# Function to write Python script to file
+def write_python_script_to_file(file_path, python_code):
+    with open(file_path, 'w') as file:
+        file.write(python_code)
+    return file_path
+
 st.title("Generate Test Cases and Step Definitions")
 
 requirement = st.text_area("Enter the requirements for generating test cases:")
@@ -67,10 +73,5 @@ if st.button("Generate Test Cases"):
 
     # Download button for Python script
     file_name = "generated_test_script.py"
-    file_bytes = python_code.encode()
-    st.download_button(
-        label="Download Python Script",
-        data=file_bytes,
-        file_name=file_name,
-        mime="text/python"
-    )
+    file_path = write_python_script_to_file(file_name, python_code)
+    st.success(f"Python script saved to: {file_path}")
