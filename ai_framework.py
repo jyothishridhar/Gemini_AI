@@ -38,6 +38,21 @@ def check_syntax_line_by_line(code):
             return False, f"Line {i + 1}: {line} -> {error}"
     return True, None
 
+# Function to clean the generated response
+def clean_generated_response(response):
+    lines = response.split('\n')
+    cleaned_lines = []
+    for line in lines:
+        if line.strip().startswith("#") or not line.strip():  # Comment or empty line
+            cleaned_lines.append(line)
+        else:
+            try:
+                ast.parse(line)
+                cleaned_lines.append(line)
+            except SyntaxError:
+                continue  # Skip invalid lines
+    return "\n".join(cleaned_lines)
+
 st.title("Generate Test Cases and Step Definitions")
 
 requirement = st.text_area("Enter the requirements for generating test cases:")
@@ -49,7 +64,8 @@ if st.button("Generate Test Cases"):
     st.subheader("Generated Test Cases and Step Definitions:")
     st.write(response)
     
-    test_cases_list = [case.strip() for case in response.split('\n') if case.strip()]
+    cleaned_response = clean_generated_response(response)
+    test_cases_list = [case.strip() for case in cleaned_response.split('\n') if case.strip()]
     df = pd.DataFrame({"Test Cases and Step Definitions": test_cases_list})
     
     st.subheader("Generated Test Cases and Step Definitions (Formatted):")
@@ -77,7 +93,7 @@ if st.button("Generate Test Cases"):
     )
 
     # Line-by-line validation step
-    is_valid, error = check_syntax_line_by_line(response)
+    is_valid, error = check_syntax_line_by_line(cleaned_response)
     if is_valid:
         st.success("Generated script is syntactically correct.")
     else:
