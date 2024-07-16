@@ -20,8 +20,8 @@ def generate_bdd_test_cases(requirement):
     response = get_gemini_response(prompt)
     return response
 
-# Function to generate Python code from BDD test cases
-def generate_python_code(test_cases):
+# Function to generate complete Python script from BDD test cases
+def generate_complete_python_script(test_cases):
     test_cases_list = [case.strip() for case in test_cases.split('\n') if case.strip()]
     python_code = ""
 
@@ -59,7 +59,7 @@ if st.button("Generate Test Cases"):
     st.subheader("Generated Test Cases and Step Definitions:")
     st.write(test_cases)
 
-    python_code = generate_python_code(test_cases)
+    python_code = generate_complete_python_script(test_cases)
     
     # Display generated Python script
     st.subheader("Generated Python Test Scripts:")
