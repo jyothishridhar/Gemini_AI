@@ -61,8 +61,9 @@ if st.button("Generate Test Cases"):
 
     python_code = generate_python_code(test_cases)
     
+    # Display generated Python script
     st.subheader("Generated Python Test Scripts:")
-    st.code(python_code, language='python')
+    st.text(python_code)
 
     # Download button for Python script
     file_name = "generated_test_script.py"
