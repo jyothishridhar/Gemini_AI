@@ -76,7 +76,7 @@ if st.button("Generate Test Cases"):
     st.text(python_code)
 
     # Save Python script to file
-    file_name = "generated_test_script.py"
+    file_name = "C:\\Testcases\\test_script.py"
     file_saved = write_python_script_to_file(file_name, python_code)
     
     if file_saved:
