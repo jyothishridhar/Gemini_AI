@@ -1,11 +1,7 @@
 import streamlit as st
 import google.generativeai as genai
 import pandas as pd
-import base64
 import os
-import tempfile
-from openpyxl import Workbook
-from openpyxl.utils.dataframe import dataframe_to_rows
 import ast
 
 # Configure API key
@@ -61,10 +57,19 @@ if st.button("Generate Test Cases"):
     prompt = f"Generate BDD test cases and their respective step definitions for Selenium and Python based on the following requirements:\n\n{requirement}"
     response = get_gemini_response(prompt)
     
+    # Debugging: Print the raw response
+    st.subheader("Raw Response")
+    st.write(response)
+    
     st.subheader("Generated Test Cases and Step Definitions:")
     st.write(response)
     
     cleaned_response = clean_generated_response(response)
+    
+    # Debugging: Print the cleaned response
+    st.subheader("Cleaned Response")
+    st.write(cleaned_response)
+    
     test_cases_list = [case.strip() for case in cleaned_response.split('\n') if case.strip()]
     df = pd.DataFrame({"Test Cases and Step Definitions": test_cases_list})
     
