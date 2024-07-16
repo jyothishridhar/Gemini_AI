@@ -1,8 +1,10 @@
 import streamlit as st
 import google.generativeai as genai
 import pandas as pd
+import base64
 import os
-import ast
+from openpyxl import Workbook
+from openpyxl.utils.dataframe import dataframe_to_rows
 
 # Configure API key
 api_key = "AIzaSyAxz3eWwhOlP-g3Cws-O153RGnxoidGv_0"
@@ -17,38 +19,6 @@ def get_gemini_response(prompt):
         return "No valid response returned. Please check the input requirements."
     return response.parts[0].text
 
-# Function to check syntax validity and return errors
-def check_syntax(code):
-    try:
-        ast.parse(code)
-        return True, None
-    except SyntaxError as e:
-        return False, e
-
-# Function to check syntax validity line-by-line
-def check_syntax_line_by_line(code):
-    lines = code.split('\n')
-    for i, line in enumerate(lines):
-        is_valid, error = check_syntax(line)
-        if not is_valid:
-            return False, f"Line {i + 1}: {line} -> {error}"
-    return True, None
-
-# Function to clean the generated response
-def clean_generated_response(response):
-    lines = response.split('\n')
-    cleaned_lines = []
-    for line in lines:
-        if line.strip().startswith("#") or not line.strip():  # Comment or empty line
-            cleaned_lines.append(line)
-        else:
-            try:
-                ast.parse(line)
-                cleaned_lines.append(line)
-            except SyntaxError:
-                continue  # Skip invalid lines
-    return "\n".join(cleaned_lines)
-
 st.title("Generate Test Cases and Step Definitions")
 
 requirement = st.text_area("Enter the requirements for generating test cases:")
@@ -60,9 +30,7 @@ if st.button("Generate Test Cases"):
     st.subheader("Generated Test Cases and Step Definitions:")
     st.write(response)
     
-    cleaned_response = clean_generated_response(response)
-    
-    test_cases_list = [case.strip() for case in cleaned_response.split('\n') if case.strip()]
+    test_cases_list = [case.strip() for case in response.split('\n') if case.strip()]
     df = pd.DataFrame({"Test Cases and Step Definitions": test_cases_list})
     
     st.subheader("Generated Test Cases and Step Definitions (Formatted):")
@@ -88,25 +56,17 @@ if st.button("Generate Test Cases"):
         file_name="test_cases_and_step_definitions.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
-
-    # Line-by-line validation step
-    is_valid, error = check_syntax_line_by_line(cleaned_response)
-    if is_valid:
-        st.success("Generated script is syntactically correct.")
-    else:
-        st.error(f"Generated script has syntax errors: {error}")
-
-        # Display error details
-        st.text_area("Error Details", error, height=200)
     
-    # Save cleaned script to a .py file
-    script_file_path = "C:\\Testcases\\generated_script.py"
-    with open(script_file_path, "w") as file:
-        file.write(cleaned_response)
+    # Save the response to a separate Python script file
+    script_file_path = "C:\\Testcases\\script.py"
+    with open(script_file_path, 'w') as script_file:
+        script_file.write(response)
+    
+    st.success(f"Script saved successfully at {script_file_path}")
     
     st.download_button(
-        label="Download script as .py",
+        label="Download script as Python file",
         data=open(script_file_path, 'rb'),
-        file_name="generated_script.py",
+        file_name="script.py",
         mime="text/x-python"
     )
