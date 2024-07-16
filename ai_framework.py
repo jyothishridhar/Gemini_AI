@@ -51,9 +51,13 @@ def generate_complete_python_script(test_cases):
 
 # Function to write Python script to file
 def write_python_script_to_file(file_path, python_code):
-    with open(file_path, 'w') as file:
-        file.write(python_code)
-    return file_path
+    try:
+        with open(file_path, 'w') as file:
+            file.write(python_code)
+        return True
+    except Exception as e:
+        st.error(f"Error occurred while saving Python script: {e}")
+        return False
 
 st.title("Generate Test Cases and Step Definitions")
 
@@ -71,7 +75,11 @@ if st.button("Generate Test Cases"):
     st.subheader("Generated Python Test Scripts:")
     st.text(python_code)
 
-    # Download button for Python script
-    file_name = "C:\\Testcases\\generated_test_script.py"
-    file_path = write_python_script_to_file(file_name, python_code)
-    st.success(f"Python script saved to: {file_path}")
+    # Save Python script to file
+    file_name = "generated_test_script.py"
+    file_saved = write_python_script_to_file(file_name, python_code)
+    
+    if file_saved:
+        st.success(f"Python script saved to: {file_name}")
+    else:
+        st.error("Failed to save Python script. Please check the logs for details.")
