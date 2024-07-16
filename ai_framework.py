@@ -101,3 +101,15 @@ if st.button("Generate Test Cases"):
 
         # Display error details
         st.text_area("Error Details", error, height=200)
+    
+    # Save cleaned script to a .py file
+    script_file_path = "C:\\Testcases\\generated_script.py"
+    with open(script_file_path, "w") as file:
+        file.write(cleaned_response)
+    
+    st.download_button(
+        label="Download script as .py",
+        data=open(script_file_path, 'rb'),
+        file_name="generated_script.py",
+        mime="text/x-python"
+    )
