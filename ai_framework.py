@@ -3,10 +3,10 @@ import google.generativeai as genai
 import pandas as pd
 import base64
 import os
+import tempfile
 from openpyxl import Workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
-import unittest
-import tempfile
+import ast
 
 # Configure API key
 api_key = "AIzaSyAxz3eWwhOlP-g3Cws-O153RGnxoidGv_0"
@@ -20,6 +20,14 @@ def get_gemini_response(prompt):
         st.error("No valid response returned. The content might have been blocked.")
         return "No valid response returned. Please check the input requirements."
     return response.parts[0].text
+
+# Function to check syntax validity
+def is_valid_python_code(code):
+    try:
+        ast.parse(code)
+        return True
+    except SyntaxError:
+        return False
 
 st.title("Generate Test Cases and Step Definitions")
 
@@ -59,13 +67,8 @@ if st.button("Generate Test Cases"):
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
 
-    # Validation step (simple example)
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".py") as temp_script:
-        temp_script.write(response.encode())
-        temp_script_path = temp_script.name
-
-    validation_result = os.system(f"python -m py_compile {temp_script_path}")
-    if validation_result == 0:
+    # Validation step
+    if is_valid_python_code(response):
         st.success("Generated script is syntactically correct.")
     else:
         st.error("Generated script has syntax errors.")
