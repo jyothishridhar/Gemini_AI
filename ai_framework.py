@@ -78,7 +78,7 @@ if st.button("Generate Test Cases"):
 
     # Save Python script to file
     features_directory = "C:\\AI_framework\\features"
-    automated_py_file = "C:\\AI_framework\\Automated.py"
+    automated_py_file = "C:\\AI_framework\\Automated_script.py"
     
     if not os.path.exists(features_directory):
         os.makedirs(features_directory)
