@@ -29,6 +29,15 @@ def check_syntax(code):
     except SyntaxError as e:
         return False, e
 
+# Function to check syntax validity line-by-line
+def check_syntax_line_by_line(code):
+    lines = code.split('\n')
+    for i, line in enumerate(lines):
+        is_valid, error = check_syntax(line)
+        if not is_valid:
+            return False, f"Line {i + 1}: {line} -> {error}"
+    return True, None
+
 st.title("Generate Test Cases and Step Definitions")
 
 requirement = st.text_area("Enter the requirements for generating test cases:")
@@ -67,12 +76,12 @@ if st.button("Generate Test Cases"):
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
 
-    # Validation step
-    is_valid, error = check_syntax(response)
+    # Line-by-line validation step
+    is_valid, error = check_syntax_line_by_line(response)
     if is_valid:
         st.success("Generated script is syntactically correct.")
     else:
         st.error(f"Generated script has syntax errors: {error}")
 
         # Display error details
-        st.text_area("Error Details", str(error), height=200)
+        st.text_area("Error Details", error, height=200)
