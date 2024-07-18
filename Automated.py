@@ -1,65 +1,50 @@
+import time
+from behave import given, when, then
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from behave import given, when, then
-import time
 
-driver = None
+# Define driver globally
+driver = webdriver.Chrome()
+driver.implicitly_wait(10)
 
-def report_step_result(step_name, result):
-    print(f"{step_name}: {'PASSED' if result else 'FAILED'}")
-
-@given('I am on the Paycomonline homepage')
-def open_homepage():
-    global driver
+@given("the Marriott website is open")
+def open_marriott_website():
     try:
-        driver = webdriver.Chrome()
-        driver.get("https://www.paycomonline.net/v4/ats/web.php/jobs?clientkey=FC9962A89833ED19DB7F75E9F964ACB9")
-        report_step_result("Open Paycomonline homepage", True)
+        driver.get("https://www.marriott.com/en-us/hotels/dpsav-amarterra-villas-resort-bali-nusa-dua-autograph-collection/overview/")
+        print("Website opened successfully")
     except Exception as e:
-        report_step_result("Open Paycomonline homepage", False)
-        raise e
+        print("Failed to open website")
 
-@when('I enter "Kennel assistant" in the search bar')
-def search_kennel_assistant():
-    global driver
+@when("I extract the text from the first two paragraphs")
+def extract_paragraph_text():
     try:
-        search_box = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.NAME, 'quick-search'))
-        )
-        search_box.send_keys('Kennel assistant')
-        report_step_result('Enter "Kennel assistant" in the search bar', True)
+        paragraphs = driver.find_elements(By.CSS_SELECTOR, 'p')
+        ad_copy1 = " ".join(paragraphs[0].text.split(" ")[:100])
+        ad_copy2 = " ".join(paragraphs[1].text.split(" ")[:100])
+        print(f"Ad Copy 1: {ad_copy1}\nAd Copy 2: {ad_copy2}")
     except Exception as e:
-        report_step_result('Enter "Kennel assistant" in the search bar', False)
-        raise e
+        print("Failed to extract text")
 
-@then('I should see a list of Kennel Assistant job URLs')
-def then_i_should_see_a_list_of_kennel_assistant_job_urls():
-    global driver
+@then("the extracted text should be as expected")
+def verify_extracted_text():
     try:
-        time.sleep(5)
-        results = WebDriverWait(driver, 10).until(
-            EC.presence_of_all_elements_located((By.XPATH, '//a[@class="JobListing__container"]'))
-        )
-        urls = [result.get_attribute("href") for result in results]
-        assert any("Kennel Assistant" in result.text for result in results), "No job listings found for 'Kennel Assistant'"
-        report_step_result('See a list of Kennel Assistant job URLs', True)
-        
-        # Print all URLs
-        for url in urls:
-            print(url)
+        expected_ad_copy1 = "Nestled on the secluded shores of Nusa Dua, Amarterra Villas Bali Nusa Dua Autograph Collection offers a captivating fusion of traditional Balinese architecture and modern luxury."
+        expected_ad_copy2 = "Immerse yourself in the beauty of our breathtaking beachfront resort, where every detail is designed to create an unforgettable experience."
+        assert ad_copy1 == expected_ad_copy1
+        assert ad_copy2 == expected_ad_copy2
+        print("Extracted text matches the expected values")
     except Exception as e:
-        report_step_result('See a list of Kennel Assistant job URLs', False)
-        raise e
+        print("Extracted text does not match the expected values")
 
 try:
-    open_homepage()
-    search_kennel_assistant()
-    then_i_should_see_a_list_of_kennel_assistant_job_urls()
+    open_marriott_website()
+    extract_paragraph_text()
+    verify_extracted_text()        
+
 finally:
-    if driver:
-        driver.quit()
+    driver.quit()
 
 
 
@@ -69,83 +54,52 @@ finally:
 
 
 
-# from selenium import webdriver
-# from selenium.webdriver.common.by import By
-# from selenium.webdriver.support.ui import WebDriverWait
-# from selenium.webdriver.support import expected_conditions as EC
-# from behave import given, when, then
-# import time
 
 
-# driver=None
-
-# @given('I am on the Paycomonline homepage')
-# def open_homepage():
-#     global driver
-#     driver = webdriver.Chrome()
-#     driver.get("https://www.paycomonline.net/v4/ats/web.php/jobs?clientkey=FC9962A89833ED19DB7F75E9F964ACB9")
-
-# @when('I enter "Kennel assistant" in the search bar')
-# def search_kennel_assistant():
-#     global driver
-#     search_box = WebDriverWait(driver, 10).until(
-#         EC.presence_of_element_located((By.NAME, 'quick-search'))
-#     )
-#     search_box.send_keys('Kennel assistant')
-    
-
-# @then('I should see a list of Kennel Assistant job URLs')
-# def then_i_should_see_a_list_of_kennel_assistant_job_urls():
-#     global driver
-#     time.sleep(5)
-#     results = WebDriverWait(driver, 10).until(
-#         EC.presence_of_all_elements_located((By.XPATH, '//a[@class="JobListing__container"]'))
-#     )
-#     urls = [result.get_attribute("href") for result in results]
-#     assert any("Kennel Assistant" in result.text for result in results), "No job listings found for 'Kennel Assistant'"
-
-# # Print all URLs
-#     for url in urls:
-#         print(url)
-
-# try:
-#     open_homepage()
-#     search_kennel_assistant()
-#     then_i_should_see_a_list_of_kennel_assistant_job_urls()
-# finally:
-#     driver.quit()    
-
-
-
+# from behave import *
 # from selenium import webdriver
 # from selenium.webdriver.common.by import By
 # from selenium.webdriver.support.ui import WebDriverWait
 # from selenium.webdriver.support import expected_conditions as EC
 
+# driver = webdriver.Chrome()
+# driver.implicitly_wait(10)  # Adjust the wait time as needed
+
 # @given('I am on the Paycomonline homepage')
-# def open_homepage():
-#     driver = webdriver.Chrome()
-#     driver.get("https://www.paycomonline.net/v4/ats/web.php/jobs?clientkey=FC9962A89833ED19DB7F75E9F964ACB9")
+# def step_impl(context):
+#     try:
+#         driver.get('https://www.paycomonline.net/v4/ats/web.php/jobs?clientkey=FC9962A89833ED19DB7F75E9F964ACB9')
+#         print("Passed: Navigated to the homepage")
+#     except Exception as e:
+#         print("Failed: Could not navigate to the homepage", e)
 
-# @when('I enter "Kennel assistant" in the search bar')
-# def search_kennel_assistant():
-#     search_box = driver.find_element_by_name("quick-search")
-#     search_box.send_keys('Kennel assistant')
-    
+# @when('I search for "Kennel Assistant"')
+# def step_impl(context):
+#     try:
+#         search_box = driver.find_element(By.ID, 'quick-search')
+#         search_box.send_keys('Kennel Assistant')
+#         search_box.submit()
+#         print("Passed: Searched for Kennel Assistant")
+#     except Exception as e:
+#         print("Failed: Could not search for Kennel Assistant", e)
 
-# @then('I should see a list of Kennel Assistant job URLs')
-# def then_i_should_see_a_list_of_kennel_assistant_job_urls():
-#     global driver
-#     time.sleep(5)
-#     results = driver.find_elements_by_xpath("//a[contains(@href, 'Kennel+Assistant')]")
-#     urls = [result.get_attribute("href") for result in results]
-#     assert any("Kennel Assistant" in result.text for result in results), "No job listings found for 'Kennel Assistant'"
+# @then('I extract and print all URLs for "Kennel Assistant"')
+# def step_impl(context):
+#     try:
+#         WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, "//a[contains(text(), 'Kennel Assistant')]")))
+#         kennel_assistant_links = driver.find_elements(By.XPATH, "//a[contains(text(), 'Kennel Assistant')]")
+#         for link in kennel_assistant_links:
+#             print(link.get_attribute('href'))
+#         print("Passed: Extracted and printed Kennel Assistant URLs")
+#     except Exception as e:
+#         print("Failed: Could not extract Kennel Assistant URLs", e)
 
 
-# try:
-#     open_homepage()
-#     search_kennel_assistant()
-#     then_i_should_see_a_list_of_kennel_assistant_job_urls()
-# finally:
-#     driver.quit()             
+
+
+
+
+
+
+
 
