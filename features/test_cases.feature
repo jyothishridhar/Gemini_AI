@@ -1,53 +1,163 @@
-**BDD Test Cases:**
+**Test Case 1:**
 
-* **Scenario: Extract Text from First Two Paragraphs**
-    * Given the Marriott website is open
-    * When I extract the text from the first two paragraphs
-    * Then the extracted text should be as expected
+* **Scenario:** POST request with valid JSON payload
+* **URL:** `/V2/preferences`
+* **Method:** POST
+* **Headers:**
+    * `application: cloud-device-management`
+    * `Content-Type: application/json`
+    * `Authorization: Bearer eyJra`
+* **Payload:**
+    ```
+    {
+        "notificationPreferences": {
+            "CDM_DEVICE_FOUND": {
+                "enabled": true,
+                "mediums": {
+                    "EMAIL": true,
+                    "IN_APP": true,
+                    "SMS": true
+                }
+            },
+            "CDM_DEVICE_MISSING": {
+                "enabled": true,
+                "mediums": {
+                    "EMAIL": true,
+                    "IN_APP": true,
+                    "SMS": true
+                }
+            },
+            "CDM_LOW_BATTERY_5PCT": {
+                "enabled": true,
+                "mediums": {
+                    "EMAIL": true,
+                    "IN_APP": true,
+                    "SMS": true
+                }
+            },
+            "CDM_LOW_BATTERY_10PCT": {
+                "enabled": true,
+                "mediums": {
+                    "EMAIL": true,
+                    "IN_APP": true,
+                    "SMS": true
+                }
+            },
+            "CDM_LOW_BATTERY_25PCT": {
+                "enabled": true,
+                "mediums": {
+                    "EMAIL": true,
+                    "IN_APP": true,
+                    "SMS": true
+                }
+            }
+        }
+    }
+    ```
+* **Expected Response:** HTTP status code 201 Created
 
-**Step Definitions:**
+**Test Case 2:**
 
-```python
-import time
-from behave import given, when, then
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+* **Scenario:** GET request with no payload
+* **URL:** `/V2/preferences`
+* **Method:** GET
+* **Headers:**
+    * `application: cloud-device-management`
+    * `Content-Type: application/json`
+    * `Authorization: Bearer eyJra`
+* **Payload:** None
+* **Expected Response:** HTTP status code 200 OK, with a JSON response containing the current notification preferences
 
-# Define driver globally
-driver = webdriver.Chrome()
-driver.implicitly_wait(10)
+**Test Case 3:**
 
-@given("the Marriott website is open")
-def open_marriott_website():
-    try:
-        driver.get("https://www.marriott.com/en-us/hotels/dpsav-amarterra-villas-resort-bali-nusa-dua-autograph-collection/overview/")
-        print("Website opened successfully")
-    except Exception as e:
-        print("Failed to open website")
+* **Scenario:** OPTIONS request
+* **URL:** `/V2/preferences`
+* **Method:** OPTIONS
+* **Headers:**
+    * `application: cloud-device-management`
+    * `Content-Type: application/json`
+    * `Authorization: Bearer eyJra`
+* **Payload:** None
+* **Expected Response:** HTTP status code 200 OK, with allowed methods in the Allow header
 
-@when("I extract the text from the first two paragraphs")
-def extract_paragraph_text():
-    try:
-        paragraphs = driver.find_elements(By.CSS_SELECTOR, 'p')
-        ad_copy1 = " ".join(paragraphs[0].text.split(" ")[:100])
-        ad_copy2 = " ".join(paragraphs[1].text.split(" ")[:100])
-        print(f"Ad Copy 1: {ad_copy1}\nAd Copy 2: {ad_copy2}")
-    except Exception as e:
-        print("Failed to extract text")
+**Test Case 4:**
 
-@then("the extracted text should be as expected")
-def verify_extracted_text():
-    try:
-        expected_ad_copy1 = "Nestled on the secluded shores of Nusa Dua, Amarterra Villas Bali Nusa Dua Autograph Collection offers a captivating fusion of traditional Balinese architecture and modern luxury."
-        expected_ad_copy2 = "Immerse yourself in the beauty of our breathtaking beachfront resort, where every detail is designed to create an unforgettable experience."
-        assert ad_copy1 == expected_ad_copy1
-        assert ad_copy2 == expected_ad_copy2
-        print("Extracted text matches the expected values")
-    except Exception as e:
-        print("Extracted text does not match the expected values")
+* **Scenario:** POST request with invalid JSON payload
+* **URL:** `/V2/preferences`
+* **Method:** POST
+* **Headers:**
+    * `application: cloud-device-management`
+    * `Content-Type: application/json`
+    * `Authorization: Bearer eyJra`
+* **Payload:**
+    ```
+    {
+        "notificationPreferences": {
+            "CDM_DEVICE_FOUND": {
+                "enabled": "not a boolean",
+                "mediums": {
+                    "EMAIL": true,
+                    "IN_APP": true,
+                    "SMS": true
+                }
+            },
+            "CDM_DEVICE_MISSING": {
+                "enabled": true,
+                "mediums": {
+                    "EMAIL": true,
+                    "IN_APP": true,
+                    "SMS": true
+                }
+            },
+            "CDM_LOW_BATTERY_5PCT": {
+                "enabled": true,
+                "mediums": {
+                    "EMAIL": true,
+                    "IN_APP": true,
+                    "SMS": true
+                }
+            },
+            "CDM_LOW_BATTERY_10PCT": {
+                "enabled": true,
+                "mediums": {
+                    "EMAIL": true,
+                    "IN_APP": true,
+                    "SMS": true
+                }
+            },
+            "CDM_LOW_BATTERY_25PCT": {
+                "enabled": true,
+                "mediums": {
+                    "EMAIL": true,
+                    "IN_APP": true,
+                    "SMS": true
+                }
+            }
+        }
+    }
+    ```
+* **Expected Response:** HTTP status code 400 Bad Request
 
-finally:
-    driver.quit()
-```
+**Test Case 5:**
+
+* **Scenario:** GET request with invalid header
+* **URL:** `/V2/preferences`
+* **Method:** GET
+* **Headers:**
+    * `application: cloud-device-management`
+    * `Content-Type: text/plain`
+    * `Authorization: Bearer eyJra`
+* **Payload:** None
+* **Expected Response:** HTTP status code 400 Bad Request
+
+**Test Case 6:**
+
+* **Scenario:** OPTIONS request with invalid header
+* **URL:** `/V2/preferences`
+* **Method:** OPTIONS
+* **Headers:**
+    * `application: cloud-device-management`
+    * `Content-Type: application/json`
+    * `Authorization: Invalid token`
+* **Payload:** None
+* **Expected Response:** HTTP status code 401 Unauthorized
