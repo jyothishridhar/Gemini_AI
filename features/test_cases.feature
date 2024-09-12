@@ -1,163 +1,45 @@
-**Test Case 1:**
+**Test Case 1**
 
-* **Scenario:** POST request with valid JSON payload
-* **URL:** `/V2/preferences`
-* **Method:** POST
-* **Headers:**
-    * `application: cloud-device-management`
-    * `Content-Type: application/json`
-    * `Authorization: Bearer eyJra`
-* **Payload:**
-    ```
-    {
-        "notificationPreferences": {
-            "CDM_DEVICE_FOUND": {
-                "enabled": true,
-                "mediums": {
-                    "EMAIL": true,
-                    "IN_APP": true,
-                    "SMS": true
-                }
-            },
-            "CDM_DEVICE_MISSING": {
-                "enabled": true,
-                "mediums": {
-                    "EMAIL": true,
-                    "IN_APP": true,
-                    "SMS": true
-                }
-            },
-            "CDM_LOW_BATTERY_5PCT": {
-                "enabled": true,
-                "mediums": {
-                    "EMAIL": true,
-                    "IN_APP": true,
-                    "SMS": true
-                }
-            },
-            "CDM_LOW_BATTERY_10PCT": {
-                "enabled": true,
-                "mediums": {
-                    "EMAIL": true,
-                    "IN_APP": true,
-                    "SMS": true
-                }
-            },
-            "CDM_LOW_BATTERY_25PCT": {
-                "enabled": true,
-                "mediums": {
-                    "EMAIL": true,
-                    "IN_APP": true,
-                    "SMS": true
-                }
-            }
-        }
-    }
-    ```
-* **Expected Response:** HTTP status code 201 Created
+**Scenario:** The user searches for "Kennel Assistant" in the search bar.
 
-**Test Case 2:**
+**Steps:**
 
-* **Scenario:** GET request with no payload
-* **URL:** `/V2/preferences`
-* **Method:** GET
-* **Headers:**
-    * `application: cloud-device-management`
-    * `Content-Type: application/json`
-    * `Authorization: Bearer eyJra`
-* **Payload:** None
-* **Expected Response:** HTTP status code 200 OK, with a JSON response containing the current notification preferences
+1. Navigate to https://www.paycomonline.net/v4/ats/web.php/jobs?clientkey=FC9962A89833ED19DB7F75E9F964ACB9.
+2. Enter "Kennel Assistant" in the search bar.
+3. Click the Search button.
+4. Verify that the results page contains a list of jobs that match the search criteria.
+5. Extract the URLs of all the jobs that match the search criteria.
 
-**Test Case 3:**
+**Expected Result:** The test case passes if the URLs of all the jobs that match the search criteria are extracted.
 
-* **Scenario:** OPTIONS request
-* **URL:** `/V2/preferences`
-* **Method:** OPTIONS
-* **Headers:**
-    * `application: cloud-device-management`
-    * `Content-Type: application/json`
-    * `Authorization: Bearer eyJra`
-* **Payload:** None
-* **Expected Response:** HTTP status code 200 OK, with allowed methods in the Allow header
+**Test Case 2**
 
-**Test Case 4:**
+**Scenario:** The user uses the "Location" filter to narrow down the search results.
 
-* **Scenario:** POST request with invalid JSON payload
-* **URL:** `/V2/preferences`
-* **Method:** POST
-* **Headers:**
-    * `application: cloud-device-management`
-    * `Content-Type: application/json`
-    * `Authorization: Bearer eyJra`
-* **Payload:**
-    ```
-    {
-        "notificationPreferences": {
-            "CDM_DEVICE_FOUND": {
-                "enabled": "not a boolean",
-                "mediums": {
-                    "EMAIL": true,
-                    "IN_APP": true,
-                    "SMS": true
-                }
-            },
-            "CDM_DEVICE_MISSING": {
-                "enabled": true,
-                "mediums": {
-                    "EMAIL": true,
-                    "IN_APP": true,
-                    "SMS": true
-                }
-            },
-            "CDM_LOW_BATTERY_5PCT": {
-                "enabled": true,
-                "mediums": {
-                    "EMAIL": true,
-                    "IN_APP": true,
-                    "SMS": true
-                }
-            },
-            "CDM_LOW_BATTERY_10PCT": {
-                "enabled": true,
-                "mediums": {
-                    "EMAIL": true,
-                    "IN_APP": true,
-                    "SMS": true
-                }
-            },
-            "CDM_LOW_BATTERY_25PCT": {
-                "enabled": true,
-                "mediums": {
-                    "EMAIL": true,
-                    "IN_APP": true,
-                    "SMS": true
-                }
-            }
-        }
-    }
-    ```
-* **Expected Response:** HTTP status code 400 Bad Request
+**Steps:**
 
-**Test Case 5:**
+1. Navigate to https://www.paycomonline.net/v4/ats/web.php/jobs?clientkey=FC9962A89833ED19DB7F75E9F964ACB9.
+2. Enter "Kennel Assistant" in the search bar.
+3. Click the "Location" filter.
+4. Select a location from the dropdown menu.
+5. Click the "Apply" button.
+6. Verify that the results page contains a list of jobs that match the search criteria and are located in the selected location.
+7. Extract the URLs of all the jobs that match the search criteria and are located in the selected location.
 
-* **Scenario:** GET request with invalid header
-* **URL:** `/V2/preferences`
-* **Method:** GET
-* **Headers:**
-    * `application: cloud-device-management`
-    * `Content-Type: text/plain`
-    * `Authorization: Bearer eyJra`
-* **Payload:** None
-* **Expected Response:** HTTP status code 400 Bad Request
+**Expected Result:** The test case passes if the URLs of all the jobs that match the search criteria and are located in the selected location are extracted.
 
-**Test Case 6:**
+**Test Case 3**
 
-* **Scenario:** OPTIONS request with invalid header
-* **URL:** `/V2/preferences`
-* **Method:** OPTIONS
-* **Headers:**
-    * `application: cloud-device-management`
-    * `Content-Type: application/json`
-    * `Authorization: Invalid token`
-* **Payload:** None
-* **Expected Response:** HTTP status code 401 Unauthorized
+**Scenario:** The user uses the "Experience" filter to narrow down the search results.
+
+**Steps:**
+
+1. Navigate to https://www.paycomonline.net/v4/ats/web.php/jobs?clientkey=FC9962A89833ED19DB7F75E9F964ACB9.
+2. Enter "Kennel Assistant" in the search bar.
+3. Click the "Experience" filter.
+4. Select an experience level from the dropdown menu.
+5. Click the "Apply" button.
+6. Verify that the results page contains a list of jobs that match the search criteria and have the selected experience level.
+7. Extract the URLs of all the jobs that match the search criteria and have the selected experience level.
+
+**Expected Result:** The test case passes if the URLs of all the jobs that match the search criteria and have the selected experience level are extracted.
